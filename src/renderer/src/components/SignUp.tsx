@@ -12,7 +12,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-
+import { IoIosEye, IoIosEyeOff } from 'react-icons/io'
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -39,7 +39,8 @@ export default function SignUp() {
     email: { is: false, title: '' },
     password: { is: false, title: '' }
   })
-  const [status, setStatus] = React.useState<boolean>(false)
+  const [save, setSave] = React.useState<boolean>(false)
+  const [eye, setEye] = React.useState<boolean>(false)
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const regex = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,5})+$/
@@ -71,8 +72,11 @@ export default function SignUp() {
         password: { is: true, title: 'Mật khẩu phải từ 6 đến 100 ký tự' }
       }))
 
-    if (validEmail && !validPass) toast.success('Đăng nhập thành công!')
-    else setStatus(false)
+    if (validEmail && !validPass) {
+      toast.success('Đăng nhập thành công!')
+      if (save) localStorage.setItem('storePass', JSON.stringify({ email: email, pass: password }))
+      else localStorage.removeItem('storePass')
+    }
     console.log({
       email: data.get('email'),
       fullName: data.get('fullName'),
@@ -80,7 +84,7 @@ export default function SignUp() {
     })
   }
   console.log(status)
-
+  const preData = localStorage.getItem('storePass')
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -121,6 +125,7 @@ export default function SignUp() {
                   required
                   onFocus={() => setValid((pre) => ({ ...pre, email: { title: '', is: false } }))}
                   fullWidth
+                  defaultValue={preData ? JSON.parse(preData)?.email : ''}
                   id="email"
                   label="Email Address"
                   name="email"
@@ -130,7 +135,7 @@ export default function SignUp() {
                   <span style={{ fontSize: '12px', color: 'red' }}>{valid.email.title}</span>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sx={{ position: 'relative' }}>
                 <TextField
                   required
                   onFocus={() =>
@@ -140,10 +145,17 @@ export default function SignUp() {
                   fullWidth
                   name="password"
                   label="Password"
-                  type="password"
+                  defaultValue={preData ? JSON.parse(preData)?.pass : ''}
+                  type={eye ? 'text' : 'password'}
                   id="password"
                   autoComplete="new-password"
                 />
+                <div
+                  className="text-[25px] absolute right-4 top-8 cursor-pointer"
+                  onClick={() => setEye((pre) => !pre)}
+                >
+                  {eye ? <IoIosEye /> : <IoIosEyeOff />}
+                </div>
                 {valid.password.title && (
                   <span style={{ fontSize: '12px', color: 'red' }}>{valid.password.title}</span>
                 )}
@@ -154,16 +166,15 @@ export default function SignUp() {
                     <Checkbox
                       value="allowExtraEmails"
                       color="primary"
-                      onChange={(e) => {
-                        localStorage.setItem('storePass', String(e.target.checked))
-                      }}
+                      defaultChecked={!!preData}
+                      onChange={(e) => setSave(e.target.checked)}
                     />
                   }
                   label="Lưu mật khẩu"
                 />
               </Grid>
             </Grid>
-            {status && <span style={{ fontSize: '15px', color: 'green' }}>Login thành công</span>}
+            {/* {status && <span style={{ fontSize: '15px', color: 'green' }}>Login thành công</span>} */}
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Đăng nhập
             </Button>
