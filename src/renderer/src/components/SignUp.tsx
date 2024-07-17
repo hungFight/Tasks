@@ -1,5 +1,6 @@
 import * as React from 'react'
-import Avatar from '@mui/material/Avatar'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
@@ -48,28 +49,29 @@ export default function SignUp() {
     const password: any = data.get('password')
 
     if (!email) setValid((pre) => ({ ...pre, email: { ...pre.email, is: true } }))
-    if (!fullName) setValid((pre) => ({ ...pre, name: { ...pre.name, is: true } }))
+    // if (!fullName) setValid((pre) => ({ ...pre, name: { ...pre.name, is: true } }))
     if (!password) setValid((pre) => ({ ...pre, password: { ...pre.password, is: true } }))
 
-    const validFullName = fullName?.length < 6 || fullName?.length > 100
     const validEmail = regex.test(email)
+    // const validFullName = fullName?.length < 6 || fullName?.length > 100
     const validPass = password?.length < 6 || password?.length > 100
 
     if (!validEmail && email)
       setValid((pre) => ({ ...pre, email: { is: true, title: 'Email sai định dạng' } }))
-    if (validFullName && fullName)
-      setValid((pre) => ({
-        ...pre,
-        name: { is: true, title: 'Họ và Tên phải từ 6 đến 100 ký tự' }
-      }))
+
+    // if (validFullName && fullName)
+    //   setValid((pre) => ({
+    //     ...pre,
+    //     name: { is: true, title: 'Họ và Tên phải từ 6 đến 100 ký tự' }
+    //   }))
+
     if (validPass && password)
       setValid((pre) => ({
         ...pre,
         password: { is: true, title: 'Mật khẩu phải từ 6 đến 100 ký tự' }
       }))
-    console.log(!validEmail && validFullName && !validPass, '5455')
 
-    if (validEmail && !validFullName && !validPass) setStatus(true)
+    if (validEmail && !validPass) toast.success('Đăng nhập thành công!')
     else setStatus(false)
     console.log({
       email: data.get('email'),
@@ -92,11 +94,11 @@ export default function SignUp() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Sign up
+            Đăng nhập
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                   autoComplete="given-name"
                   name="fullName"
@@ -111,7 +113,7 @@ export default function SignUp() {
                 {valid.name.title && (
                   <span style={{ fontSize: '12px', color: 'red' }}>{valid.name.title}</span>
                 )}
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12}>
                 <TextField
@@ -146,7 +148,7 @@ export default function SignUp() {
                   <span style={{ fontSize: '12px', color: 'red' }}>{valid.password.title}</span>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className="">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -161,14 +163,14 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
-            {status && <span style={{ fontSize: '15px', color: 'green' }}>Đăng ký thành công</span>}
+            {status && <span style={{ fontSize: '15px', color: 'green' }}>Login thành công</span>}
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-              Sign Up
+              Đăng nhập
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="#" variant="body2">
-                  Already have an account? Sign in
+                  Chưa có tài khoản? Đăng ký
                 </Link>
               </Grid>
             </Grid>
@@ -176,6 +178,7 @@ export default function SignUp() {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      <ToastContainer />
     </ThemeProvider>
   )
 }
